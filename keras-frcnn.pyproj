@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{1cd63934-4435-4df6-82fe-894e592b4ae0}</ProjectGuid>
+    <ProjectHome />
+    <StartupFile>test_frcnn.py</StartupFile>
+    <SearchPath />
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <ProjectTypeGuids>{888888a0-9f3d-457c-b088-3a5042f75d52}</ProjectTypeGuids>
+    <LaunchProvider>Standard Python launcher</LaunchProvider>
+    <InterpreterId />
+    <InterpreterVersion />
+    <CommandLineArguments>-p D:\Prog\Projects\MachineLearning\Misc\Keras\keras-frcnn\VOCdevkit\VOC2012\JPEGImages\2007_000027.jpg </CommandLineArguments>
+    <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
+  <PropertyGroup>
+    <VisualStudioVersion Condition=" '$(VisualStudioVersion)' == '' ">10.0</VisualStudioVersion>
+    <PtvsTargetsFile>$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets</PtvsTargetsFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include="requirements.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="keras_frcnn\config.py" />
+    <Compile Include="keras_frcnn\data_augment.py" />
+    <Compile Include="keras_frcnn\data_generators.py" />
+    <Compile Include="keras_frcnn\FixedBatchNormalization.py" />
+    <Compile Include="keras_frcnn\losses.py" />
+    <Compile Include="keras_frcnn\pascal_voc_parser.py" />
+    <Compile Include="keras_frcnn\resnet.py" />
+    <Compile Include="keras_frcnn\RoiPoolingConv.py" />
+    <Compile Include="keras_frcnn\roi_helpers.py" />
+    <Compile Include="keras_frcnn\simple_parser.py" />
+    <Compile Include="keras_frcnn\__init__.py" />
+    <Compile Include="measure_map.py" />
+    <Compile Include="test_frcnn.py" />
+    <Compile Include="train_frcnn.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="keras_frcnn" />
+  </ItemGroup>
+  <Import Project="$(PtvsTargetsFile)" Condition="Exists($(PtvsTargetsFile))" />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" Condition="!Exists($(PtvsTargetsFile))" />
+</Project>
