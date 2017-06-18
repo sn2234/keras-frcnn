@@ -90,3 +90,5 @@ ENV/
 *.suo
 *.tar
 /VOCdevkit
+*.h5
+*.pickle

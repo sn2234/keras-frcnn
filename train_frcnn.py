@@ -6,6 +6,8 @@ import numpy as np
 from optparse import OptionParser
 import pickle
 
+import SetEnvForGpu
+
 from keras import backend as K
 from keras.optimizers import Adam
 from keras.layers import Input
@@ -36,7 +38,7 @@ parser.add_option("--config_filename", dest="config_filename", help=
 parser.add_option("--output_weight_path", dest="output_weight_path", help="Output path for weights.", default='./model_frcnn.hdf5')
 parser.add_option("--input_weight_path", dest="input_weight_path", help="Input path for weights. If not specified, will try to load default weights provided by keras.")
 
-(options, args) = parser.parse_args()
+(options, args) = parser.parse_args(['-p', 'D:\\Prog\\Projects\\MachineLearning\\Misc\\Keras\\keras-frcnn\\VOCdevkit\\','--num_epochs', '10'])
 
 if not options.train_path:   # if filename is not given
 	parser.error('Error: path to training data must be specified. Pass --path to command line')
@@ -69,7 +71,7 @@ if 'bg' not in classes_count:
 
 C.class_mapping = class_mapping
 
-inv_map = {v: k for k, v in class_mapping.iteritems()}
+inv_map = {v: k for k, v in class_mapping.items()}
 
 print('Training images per class:')
 pprint.pprint(classes_count)
@@ -77,7 +79,7 @@ print('Num classes (including bg) = {}'.format(len(classes_count)))
 
 config_output_filename = options.config_filename
 
-with open(config_output_filename, 'w') as config_f:
+with open(config_output_filename, 'wb') as config_f:
 	pickle.dump(C,config_f)
 	print('Config has been written to {}, and can be loaded when testing to ensure correct results'.format(config_output_filename))
 
@@ -92,8 +94,10 @@ print('Num train samples {}'.format(len(train_imgs)))
 print('Num val samples {}'.format(len(val_imgs)))
 
 
-data_gen_train = data_generators.get_anchor_gt(train_imgs, classes_count, C, K.image_dim_ordering(), mode='train')
+data_gen_train = data_generators.get_anchor_gt(train_imgs[:10], classes_count, C, K.image_dim_ordering(), mode='train')
 data_gen_val = data_generators.get_anchor_gt(val_imgs, classes_count, C, K.image_dim_ordering(), mode='val')
+
+xx = next(data_gen_train)
 
 if K.image_dim_ordering() == 'th':
 	input_shape_img = (3, None, None)
@@ -145,7 +149,7 @@ start_time = time.time()
 
 best_loss = np.Inf
 
-class_mapping_inv = {v: k for k, v in class_mapping.iteritems()}
+class_mapping_inv = {v: k for k, v in class_mapping.items()}
 print('Starting training')
 
 
@@ -163,7 +167,7 @@ for epoch_num in range(num_epochs):
 				if mean_overlapping_bboxes == 0:
 					print('RPN is not producing bounding boxes that overlap the ground truth boxes. Check RPN settings or keep training.')
 
-			X, Y, img_data = data_gen_train.next()
+			X, Y, img_data = next(data_gen_train)
 
 			loss_rpn = model_rpn.train_on_batch(X, Y)
 

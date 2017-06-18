@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{1cd63934-4435-4df6-82fe-894e592b4ae0}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>test_frcnn.py</StartupFile>
+    <StartupFile>train_frcnn.py</StartupFile>
     <SearchPath />
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
@@ -13,7 +13,7 @@
     <LaunchProvider>Standard Python launcher</LaunchProvider>
     <InterpreterId />
     <InterpreterVersion />
-    <CommandLineArguments>-p D:\Prog\Projects\MachineLearning\Misc\Keras\keras-frcnn\VOCdevkit\VOC2012\JPEGImages\2007_000027.jpg </CommandLineArguments>
+    <CommandLineArguments>-p D:\Prog\Projects\MachineLearning\Misc\Keras\keras-frcnn\VOCdevkit\  --num_epochs 10</CommandLineArguments>
     <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
@@ -38,6 +38,7 @@
     <Compile Include="keras_frcnn\simple_parser.py" />
     <Compile Include="keras_frcnn\__init__.py" />
     <Compile Include="measure_map.py" />
+    <Compile Include="SetEnvForGpu.py" />
     <Compile Include="test_frcnn.py" />
     <Compile Include="train_frcnn.py" />
   </ItemGroup>
