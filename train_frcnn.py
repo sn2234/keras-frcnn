@@ -1,3 +1,4 @@
+from __future__ import division
 import random
 import pprint
 import sys
@@ -9,7 +10,7 @@ import pickle
 import SetEnvForGpu
 
 from keras import backend as K
-from keras.optimizers import Adam
+from keras.optimizers import Adam, SGD, RMSprop
 from keras.layers import Input
 from keras.models import Model
 from keras_frcnn import config, data_generators
@@ -27,7 +28,7 @@ parser.add_option("-o", "--parser", dest="parser", help="Parser to use. One of s
                 default="pascal_voc"),
 parser.add_option("-n", "--num_rois", dest="num_rois",
                 help="Number of ROIs per iteration. Higher means more memory use.", default=32)
-parser.add_option("--hf", dest="horizontal_flips", help="Augment with horizontal flips in training. (Default=true).", action="store_true", default=False)
+parser.add_option("--hf", dest="horizontal_flips", help="Augment with horizontal flips in training. (Default=false).", action="store_true", default=False)
 parser.add_option("--vf", dest="vertical_flips", help="Augment with vertical flips in training. (Default=false).", action="store_true", default=False)
 parser.add_option("--rot", "--rot_90", dest="rot_90", help="Augment with 90 degree rotations in training. (Default=false).",
                   action="store_true", default=False)
@@ -83,8 +84,8 @@ print('Num classes (including bg) = {}'.format(len(classes_count)))
 config_output_filename = options.config_filename
 
 with open(config_output_filename, 'wb') as config_f:
-    pickle.dump(C,config_f)
-    print('Config has been written to {}, and can be loaded when testing to ensure correct results'.format(config_output_filename))
+	pickle.dump(C,config_f)
+	print('Config has been written to {}, and can be loaded when testing to ensure correct results'.format(config_output_filename))
 
 random.shuffle(all_imgs)
 
@@ -170,7 +171,7 @@ for epoch_num in range(num_epochs):
                 if mean_overlapping_bboxes == 0:
                     print('RPN is not producing bounding boxes that overlap the ground truth boxes. Check RPN settings or keep training.')
 
-            X, Y, img_data = next(data_gen_train)
+			X, Y, img_data = next(data_gen_train)
 
             print("Training model_rpn, X.shape:{0}".format(X.shape))
             loss_rpn = model_rpn.train_on_batch(X, Y)
@@ -207,15 +208,15 @@ for epoch_num in range(num_epochs):
             rpn_accuracy_rpn_monitor.append(len(pos_samples))
             rpn_accuracy_for_epoch.append((len(pos_samples)))
 
-            if C.num_rois > 1:
-                if len(pos_samples) < C.num_rois//2:
-                    selected_pos_samples = pos_samples.tolist()
-                else:
-                    selected_pos_samples = np.random.choice(pos_samples, C.num_rois//2, replace=False).tolist()
-                try:
-                    selected_neg_samples = np.random.choice(neg_samples, C.num_rois - len(selected_pos_samples), replace=False).tolist()
-                except:
-                    selected_neg_samples = np.random.choice(neg_samples, C.num_rois - len(selected_pos_samples), replace=True).tolist()
+			if C.num_rois > 1:
+				if len(pos_samples) < C.num_rois//2:
+					selected_pos_samples = pos_samples.tolist()
+				else:
+					selected_pos_samples = np.random.choice(pos_samples, C.num_rois//2, replace=False).tolist()
+				try:
+					selected_neg_samples = np.random.choice(neg_samples, C.num_rois - len(selected_pos_samples), replace=False).tolist()
+				except:
+					selected_neg_samples = np.random.choice(neg_samples, C.num_rois - len(selected_pos_samples), replace=True).tolist()
 
                 sel_samples = selected_pos_samples + selected_neg_samples
             else:
@@ -240,8 +241,8 @@ for epoch_num in range(num_epochs):
 
             iter_num += 1
 
-            progbar.update(iter_num, [('rpn_cls', np.mean(losses[:iter_num, 0])), ('rpn_regr', np.mean(losses[:iter_num, 1])),
-                                      ('detector_cls', np.mean(losses[:iter_num, 2])), ('detector_regr', np.mean(losses[:iter_num, 0]))])
+			progbar.update(iter_num, [('rpn_cls', np.mean(losses[:iter_num, 0])), ('rpn_regr', np.mean(losses[:iter_num, 1])),
+									  ('detector_cls', np.mean(losses[:iter_num, 2])), ('detector_regr', np.mean(losses[:iter_num, 3]))])
 
             if iter_num == epoch_length:
                 loss_rpn_cls = np.mean(losses[:, 0])

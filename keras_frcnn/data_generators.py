@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import numpy as np
 import cv2
 import random
@@ -7,7 +8,8 @@ from . import roi_helpers
 import threading
 import itertools
 
-random.seed(0)
+# random.seed(0)
+
 
 def get_img_output_length(width, height):
 	def get_output_length(input_length):
@@ -22,12 +24,13 @@ def get_img_output_length(width, height):
 
 	return get_output_length(width), get_output_length(height)
 
-def union(au, bu):
-	x = min(au[0], bu[0])
-	y = min(au[1], bu[1])
-	w = max(au[2], bu[2]) - x
-	h = max(au[3], bu[3]) - y
-	return x, y, w, h
+
+def union(au, bu, area_intersection):
+	area_a = (au[2] - au[0]) * (au[3] - au[1])
+	area_b = (bu[2] - bu[0]) * (bu[3] - bu[1])
+	area_union = area_a + area_b - area_intersection
+	return area_union
+
 
 def intersection(ai, bi):
 	x = max(ai[0], bi[0])
@@ -35,8 +38,9 @@ def intersection(ai, bi):
 	w = min(ai[2], bi[2]) - x
 	h = min(ai[3], bi[3]) - y
 	if w < 0 or h < 0:
-		return 0, 0, 0, 0
-	return x, y, w, h
+		return 0
+	return w*h
+
 
 def iou(a, b):
 	# a and b should be (x1,y1,x2,y2)
@@ -44,11 +48,9 @@ def iou(a, b):
 	if a[0] >= a[2] or a[1] >= a[3] or b[0] >= b[2] or b[1] >= b[3]:
 		return 0.0
 
-	i = intersection(a, b)
-	u = union(a, b)
+	area_i = intersection(a, b)
+	area_u = union(a, b, area_i)
 
-	area_i = i[2] * i[3]
-	area_u = u[2] * u[3]
 	return float(area_i) / float(area_u)
 
 
@@ -276,7 +278,7 @@ class threadsafe_iter:
 
 	def next(self):
 		with self.lock:
-			return self.it.next()		
+			return next(self.it)		
 
 	
 def threadsafe_generator(f):
@@ -288,7 +290,8 @@ def threadsafe_generator(f):
 
 def get_anchor_gt(all_img_data, class_count, C, backend, mode='train'):
 
-	#all_img_data = sorted(all_img_data)
+	# The following line is not useful with Python 3.5, it is kept for the legacy
+	# all_img_data = sorted(all_img_data)
 
 	sample_selector = SampleSelector(class_count)
 
