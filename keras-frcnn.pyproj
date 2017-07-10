@@ -40,6 +40,9 @@
     <Compile Include="measure_map.py" />
     <Compile Include="SetEnvForGpu.py" />
     <Compile Include="test_frcnn.py" />
+    <Compile Include="test_roi.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="train_frcnn.py" />
   </ItemGroup>
   <ItemGroup>
